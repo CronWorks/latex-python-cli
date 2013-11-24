@@ -1,0 +1,11 @@
+Package: latex-python-cli
+Version: 1.22
+Section: cws
+Priority: optional
+Architecture: all
+Essential: no
+Depends: py-base, latex-python
+Installed-Size: 1
+Maintainer: Luke Scott [luke at cronworks dot net]
+Provides: latex-python-cli
+Description: [cws] cli interface for latex-python command(s()

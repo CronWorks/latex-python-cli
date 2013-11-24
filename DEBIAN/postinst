@@ -1,0 +1,7 @@
+#!/bin/sh
+chown root:root /usr/local/lib/latex_python/Texify.py
+chmod 755 /usr/local/lib/latex_python/Texify.py
+
+# a bit hacky but come on, I'm just a regular guy
+chown root:root /usr/share/nemo/actions -R
+

@@ -1,0 +1,27 @@
+[Nemo Action]
+# **** REQUIRED ****
+Name=TeXify
+
+# %N can be used as with the Name field, same rules apply
+Comment=TeXify
+
+# **** REQUIRED ****
+Exec=texify --follow "%F"
+
+Icon-Name=gnome-mime-application-pdf
+
+# [S]ingle
+# [M]ultiple
+# Any
+# NotNone
+# None (background click)
+# or a number defining exact # of files
+# Defaults to Single if this field is missing
+Selection=S
+
+# **** REQUIRED ****
+# semicolon-separated
+# case-INsensitive
+# 'dir', 'any', 'none' are valid
+Extensions=tex;
+
