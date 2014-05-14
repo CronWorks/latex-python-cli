@@ -3,7 +3,7 @@
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 3 of the License, or
-# (at your option) any later version. 
+# (at your option) any later version.
 
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -43,25 +43,43 @@ class Texify(Job):
 
     def run(self):
         rebuiltAt = 0
-        self.texFilename = realpath(self.arguments['filename'])
+        filename = realpath(self.arguments['filename'])
         while(True):
-            if getmtime(self.texFilename) > rebuiltAt:
-                rebuiltAt = getmtime(self.texFilename)
-                self.regenerate()
+            if getmtime(filename) > rebuiltAt:
+                rebuiltAt = getmtime(filename)
+                self.regenerate(filename)
             if not self.arguments['follow']:
                 break
             sleep(SLEEP_SECONDS_BETWEEN_BUILDS)
+            self.out.put('sleep timeout reached. checking if file was touched...', self.out.LOG_LEVEL_DEBUG)
             if self.evinceProcess.poll() != None:
                 self.out.put('PDF Viewer has closed, or it was already open before running "texify".')
                 break
 
 
-    def regenerate(self):
-        generatePdf(self.texFilename, self.system, self.arguments['glossary'])
-        texFilePieces = splitext(self.texFilename)
-        p = self.system.startCommandProcess(['evince', texFilePieces[0] + '.pdf'])
-        if self.evinceProcess == None:
-            self.evinceProcess = p
+    def regenerate(self, filename):
+        if filename[-3, ].lower() == '.py':
+            documentModule = __import__(filename)
+            (errors, warnings) = documentModule.generate()  # eventually calls regenerateFromTexFile()
+        elif  filename[-4, ].lower() == '.tex':
+            (errors, warnings) = generatePdf(texFilename, self.system, self.arguments['glossary'])
+
+        if errors or warnings:
+            self.indentMessages("ERRORS", errors)
+            self.indentMessages("WARNINGS", warnings)
+        else:
+            pdfFilename = splitext(filename)[0] + '.pdf'
+            p = self.system.startCommandProcess(['evince', pdfFilename])
+            if self.evinceProcess == None:
+                self.evinceProcess = p
+
+
+    def indentMessages(self, label, messages):
+        if len(messages) > 0:
+            self.out.indent(label + ":")
+            for message in messages:
+                self.out.put(message)
+            self.out.unIndent()
 
 if __name__ == '__main__':
     Texify().run()
