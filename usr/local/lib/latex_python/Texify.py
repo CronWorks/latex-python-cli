@@ -61,10 +61,7 @@ class Texify(Job):
     def regenerate(self, filename):
         if filename[-3:].lower() == '.py':
             current_document = load_source('current_document', filename)
-            try:
-                (errors, warnings) = current_document.generate()  # eventually calls regenerateFromTexFile()
-            except:
-                (errors, warnings) =(['Could not call generate() function. This function must be present in your *.py file.'],[])
+            (errors, warnings) = current_document.generate()  # eventually calls regenerateFromTexFile()
         elif  filename[-4:].lower() == '.tex':
             (errors, warnings) = generatePdf(texFilename, self.system, self.arguments['glossary'])
 
@@ -72,7 +69,9 @@ class Texify(Job):
             self.indentMessages("ERRORS", errors)
             self.indentMessages("WARNINGS", warnings)
         else:
+            sleep(1)  # wait for pdf to be written
             pdfFilename = splitext(filename)[0] + '.pdf'
+            self.out.put('starting "evince %s"' % pdfFilename)
             p = self.system.startCommandProcess(['evince', pdfFilename])
             if self.evinceProcess == None:
                 self.evinceProcess = p

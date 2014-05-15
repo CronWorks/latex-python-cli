@@ -1,5 +1,5 @@
 Package: latex-python-cli
-Version: 1.30
+Version: 1.32
 Section: cws
 Priority: optional
 Architecture: all
