@@ -21,6 +21,7 @@ from subprocess import STDOUT
 from time import sleep
 from latex_python.XetexWrapper import generatePdf
 from py_base.Job import Job
+from imp import load_source
 
 SLEEP_SECONDS_BETWEEN_BUILDS = 1
 
@@ -58,10 +59,10 @@ class Texify(Job):
 
 
     def regenerate(self, filename):
-        if filename[-3, ].lower() == '.py':
-            documentModule = __import__(filename)
-            (errors, warnings) = documentModule.generate()  # eventually calls regenerateFromTexFile()
-        elif  filename[-4, ].lower() == '.tex':
+        if filename[-3:].lower() == '.py':
+            current_document = load_source('current_document', filename)
+            (errors, warnings) = current_document.generate()  # eventually calls regenerateFromTexFile()
+        elif  filename[-4:].lower() == '.tex':
             (errors, warnings) = generatePdf(texFilename, self.system, self.arguments['glossary'])
 
         if errors or warnings:
