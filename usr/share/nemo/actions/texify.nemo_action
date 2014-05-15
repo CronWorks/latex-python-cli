@@ -23,5 +23,5 @@ Selection=S
 # semicolon-separated
 # case-INsensitive
 # 'dir', 'any', 'none' are valid
-Extensions=tex;
+Extensions=tex;py;
 

@@ -61,7 +61,10 @@ class Texify(Job):
     def regenerate(self, filename):
         if filename[-3:].lower() == '.py':
             current_document = load_source('current_document', filename)
-            (errors, warnings) = current_document.generate()  # eventually calls regenerateFromTexFile()
+            try:
+                (errors, warnings) = current_document.generate()  # eventually calls regenerateFromTexFile()
+            except:
+                (errors, warnings) =(['Could not call generate() function. This function must be present in your *.py file.'],[])
         elif  filename[-4:].lower() == '.tex':
             (errors, warnings) = generatePdf(texFilename, self.system, self.arguments['glossary'])
 
