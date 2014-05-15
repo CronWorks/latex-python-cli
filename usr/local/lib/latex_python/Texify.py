@@ -62,8 +62,8 @@ class Texify(Job):
         if filename[-3:].lower() == '.py':
             current_document = load_source('current_document', filename)
             (errors, warnings) = current_document.generate()  # eventually calls regenerateFromTexFile()
-        elif  filename[-4:].lower() == '.tex':
-            (errors, warnings) = generatePdf(texFilename, self.system, self.arguments['glossary'])
+        elif filename[-4:].lower() == '.tex':
+            (errors, warnings) = generatePdf(filename, self.system, self.arguments['glossary'])
 
         if errors or warnings:
             self.indentMessages("ERRORS", errors)
