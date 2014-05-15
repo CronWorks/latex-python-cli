@@ -63,14 +63,13 @@ class Texify(Job):
             current_document = load_source('current_document', filename)
             (errors, warnings) = current_document.generate()  # eventually calls regenerateFromTexFile()
         elif filename[-4:].lower() == '.tex':
-            (errors, warnings) = generatePdf(filename, self.system, self.arguments['glossary'])
+            (errors, warnings, pdfFilename) = generatePdf(filename, self.system, self.arguments['glossary'])
 
         if errors or warnings:
             self.indentMessages("ERRORS", errors)
             self.indentMessages("WARNINGS", warnings)
         else:
             sleep(1)  # wait for pdf to be written
-            pdfFilename = splitext(filename)[0] + '.pdf'
             self.out.put('starting "evince %s"' % pdfFilename)
             p = self.system.startCommandProcess(['evince', pdfFilename])
             if self.evinceProcess == None:
