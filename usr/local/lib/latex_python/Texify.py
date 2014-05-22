@@ -22,6 +22,8 @@ from time import sleep
 from latex_python.XetexWrapper import generatePdf
 from py_base.Job import Job
 from imp import load_source
+from latex_python.JinjaBase import JinjaTexDocument
+
 
 SLEEP_SECONDS_BETWEEN_BUILDS = 1
 
@@ -59,10 +61,16 @@ class Texify(Job):
 
 
     def regenerate(self, filename):
-        if filename[-3:].lower() == '.py':
-            current_document = load_source('current_document', filename)
-            (errors, warnings, pdfFilename) = current_document.generate()  # eventually calls regenerateFromTexFile()
-        elif filename[-4:].lower() == '.tex':
+        (baseFilename, extension) = splitext(texFilename)
+        if extension.lower() == '.py':
+            pdfFilename = baseFilename + '.pdf'
+            documentModule = load_source('documentModule', filename)
+            for k in documentModule.__dict__.keys():
+                document = documentModule.__dict__[k]  # the convention for Texifiable .py modules
+                if isinstance(document, JinjaTexDocument):
+                    (errors, warnings, pdfFilename) = document.generate(pdfFilename)  # eventually calls regenerateFromTexFile()
+                    break  # only generate the first document we find
+        elif extension.lower() == '.tex':
             (errors, warnings, pdfFilename) = generatePdf(filename, self.system, self.arguments['glossary'])
 
         if errors or warnings:
