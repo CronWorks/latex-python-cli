@@ -61,7 +61,7 @@ class Texify(Job):
 
 
     def regenerate(self, filename):
-        (baseFilename, extension) = splitext(texFilename)
+        (baseFilename, extension) = splitext(filename)
         if extension.lower() == '.py':
             pdfFilename = baseFilename + '.pdf'
             documentModule = load_source('documentModule', filename)
