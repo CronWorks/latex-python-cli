@@ -40,6 +40,10 @@ class Texify(Job):
                             '--glossary',
                             action='store_true',
                             help='run the glossary creation tool')
+        parser.add_argument('-l',
+                            '--log',
+                            action='store_true',
+                            help='retain the log file even if successful (it\'s deleted by default on success)')
         parser.add_argument('filename',
                             metavar='<filename>',
                             help='filename of the .tex file to process (may include embedded Python)')
@@ -71,7 +75,10 @@ class Texify(Job):
                     (errors, warnings, pdfFilename) = document.generate(pdfFilename)  # eventually calls regenerateFromTexFile()
                     break  # only generate the first document we find
         elif extension.lower() == '.tex':
-            (errors, warnings, pdfFilename) = generatePdf(filename, self.system, self.arguments['glossary'])
+            (errors, warnings, pdfFilename) = generatePdf(filename, self.system, glossary=self.arguments['glossary'], preserveLogFile=self.arguments['log'])
+        else:
+            self.out.put('ERROR: You can only Texify something ending in .tex or .py!')
+            exit(-1)
 
         if errors or warnings:
             self.indentMessages("ERRORS", errors)
